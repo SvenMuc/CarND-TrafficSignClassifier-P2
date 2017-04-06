@@ -1,0 +1,2 @@
+model_checkpoint_path: "LeNet5_dropout"
+all_model_checkpoint_paths: "LeNet5_dropout"
