@@ -52,3 +52,9 @@ jupyter notebook Traffic_Sign_Classifier.ipynb
 
 ### Requirements for Submission
 Follow the instructions in the `Traffic_Sign_Classifier.ipynb` notebook and write the project report using the writeup template as a guide, `writeup_template.md`. Submit the project code and writeup document.
+
+Project Results
+---
+Final writeup: [writeup.md](https://github.com/SvenMuc/CarND-TrafficSignClassifier-P2/blob/master/writeup/writeup.md)
+
+Full report of the Ipython notebook [report.html](https://github.com/SvenMuc/CarND-TrafficSignClassifier-P2/blob/master/report.html)
