@@ -1,12 +1,6 @@
-#**Traffic Sign Recognition** 
+# Traffic Sign Recognition
 
-##Writeup Template
-
-###You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
----
-
-**Build a Traffic Sign Recognition Project**
+### Build a Traffic Sign Recognition Project
 
 The goals / steps of this project are the following:
 * Load the data set (see below for links to the project data set)
@@ -16,64 +10,119 @@ The goals / steps of this project are the following:
 * Analyze the softmax probabilities of the new images
 * Summarize the results with a written report
 
-
 [//]: # (Image References)
 
-[image1]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+[image1]: ./traffic_sign_examples.png "traffic sign examples"
+[image2]: ./image_pre_processing.png "pre-processed images"
+[image3]: ./class_id_histogram.png "traffic sign histogram"
+[image4]: ./training_loss_accuracy.png "loss and accurady charts"
+[image5]: ./new_traffic_signes_pre_processed.png "new pre-processed traffic signs"
+[image6]: ./confusion_matrix.png "confusion matrix"
+[image7]: ./traffic_sign_3b_probabilities.png "60 km/h electronic"
+[image8]: ./traffic_sign_1_probabilities.png "30 km/h"
+[image9]: ./traffic_sign_3_probabilities.png "60 km/h"
+[image10]: ./traffic_sign_38_probabilities.png "keep right"
+[image11]: ./traffic_sign_13_probabilities.png "yield"
+[image12]: ./fscores.png "f1-scores"
+[image13]: ./layer_1_activations.png "layer 1"
 
-## Rubric Points
-###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
+### Writeup / README
 
----
-###Writeup / README
+Link to my github project [Github project](https://github.com/SvenMuc/CarND-TrafficSignClassifier-P2).
 
-####1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.
+## Data Set Summary & Exploration
 
-You're reading it! and here is a link to my [project code](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb)
+### Basic summary of the data set
 
-###Data Set Summary & Exploration
+The code for this step is contained in the code cells 1-3 of the IPython notebook.  
 
-####1. Provide a basic summary of the data set and identify where in your code the summary was done. In the code, the analysis should be done using python, numpy and/or pandas methods rather than hardcoding results manually.
+I used the numpy and csv library to calculate the summary statistics of the traffic signs data set:
 
-The code for this step is contained in the second code cell of the IPython notebook.  
+| Data Set          | #Images | Percentage |
+|:------------------|--------:|-----------:|
+| Training samples  |   34799 |     67.13% |
+| Validation sample |    4410 |      8.51% |
+| Test samples      |   12630 |     24.35% |
 
-I used the pandas library to calculate summary statistics of the traffic
-signs data set:
+In total the data set consist of 51839 images. Each image has a height x width of 32x32 and 3 color channels (RGB).
 
-* The size of training set is ?
-* The size of test set is ?
-* The shape of a traffic sign image is ?
-* The number of unique classes/labels in the data set is ?
+The data set contains 43 different German traffic signs as listed below.
 
-####2. Include an exploratory visualization of the dataset and identify where the code is in your code file.
+| ClassId | Signname                                           |
+|:--------|:---------------------------------------------------|
+| 0       | Speed limit (20km/h)                               |
+| 1       | Speed limit (30km/h)                               |
+| 2       | Speed limit (50km/h)                               |
+| 3       | Speed limit (60km/h)                               |
+| 4       | Speed limit (70km/h)                               |
+| 5       | Speed limit (80km/h)                               |
+| 6       | End of speed limit (80km/h)                        |
+| 7       | Speed limit (100km/h)                              |
+| 8       | Speed limit (120km/h)                              |
+| 9       | No passing                                         |
+| 10      | No passing for vehicles over 3.5 metric tons       |
+| 11      | Right-of-way at the next intersection              |
+| 12      | Priority road                                      |
+| 13      | Yield                                              |
+| 14      | Stop                                               |
+| 15      | No vehicles                                        |
+| 16      | Vehicles over 3.5 metric tons prohibited           |
+| 17      | No entry                                           |
+| 18      | General caution                                    |
+| 19      | Dangerous curve to the left                        |
+| 20      | Dangerous curve to the right                       |
+| 21      | Double curve                                       |
+| 22      | Bumpy road                                         |
+| 23      | Slippery road                                      |
+| 24      | Road narrows on the right                          |
+| 25      | Road work                                          |
+| 26      | Traffic signals                                    |
+| 27      | Pedestrians                                        |
+| 28      | Children crossing                                  |
+| 29      | Bicycles crossing                                  |
+| 30      | Beware of ice/snow                                 |
+| 31      | Wild animals crossing                              |
+| 32      | End of all speed and passing limits                |
+| 33      | Turn right ahead                                   |
+| 34      | Turn left ahead                                    |
+| 35      | Ahead only                                         |
+| 36      | Go straight or right                               |
+| 37      | Go straight or left                                |
+| 38      | Keep right                                         |
+| 39      | Keep left                                          |
+| 40      | Roundabout mandatory                               |
+| 41      | End of no passing                                  |
+| 42      | End of no passing by vehicles over 3.5 metric tons |
 
-The code for this step is contained in the third code cell of the IPython notebook.  
+### Exploratory Visualization of the Dataset
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
+The code for this step is contained in the code cell  6 and 7 of the IPython notebook.  
 
-![alt text][image1]
+The left bar chart shows the distribution of the traffic sign class IDs for the training, the validation and the test set. The data sets are very unbalanced. E.g. the data sets contains almost 2000 30 km/h speed limit signs but only 180 20 km/h speed limit signs.
 
-###Design and Test a Model Architecture
+As shown in the right chart the data sets well balanced between training, validation and test sets.
 
-####1. Describe how, and identify where in your code, you preprocessed the image data. What tecniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc.
+![Histogram of data set traffic signs][image3]
 
-The code for this step is contained in the fourth code cell of the IPython notebook.
+The images below give an overview about the German traffic signs contained in the training data set. The image have a huge variation in illumination. Some traffic signs are almost dark. Others are overexposured or show a high reflection (e.g. see the yield signs in the second row).
 
-As a first step, I decided to convert the images to grayscale because ...
+![Traffic sign examples][image1]
 
-Here is an example of a traffic sign image before and after grayscaling.
+## Design and Test a Model Architecture
+### Image Pre-Processing and Normalization
+The code for this step is contained in the code cell 8 and 9 of the IPython notebook.
+
+As a first step, I decided to convert the images to grayscale because test runs showed almost similar accuracies on the validation set with RGB images. By using grayscale images the input vector can be reduced from 32x32x3 down to 32x32x1. Furthermore, in the specific domain of traffic sign classification, the network looks for characteristic traffic sign structures which can also easily extracted from grayscale images (see also last chapter "visualization of CNN layers").
+
+The first row shows the original RGB image while the second row shows the grayscale image.
 
 ![alt text][image2]
 
-As a last step, I normalized the image data because ...
+As a second step, I applied an adaptive histogram equalization in order to improve the contrast especially in the bright and dark images. OpenCV provides the CLAHE (Contrast Limited Adaptive Histogram Equalization) algorithm to exactly achieve this task. The last row in the image above shows the improved images. The "80 km/h speed limit" sign is a good example showing the benefit of this pre-processing step. In the RGB and grayscale image the 80 is almost not visible. After the adaptive histogram equalization the numbers are clearly visible.
 
+As a last step, I normalized the image data to values between -0.5 and 0.5 because the range of input data varies widely (between 0 and 255). Many classifiers are using the euclidean distance in the cost function. If the values vary a lot, the distance will be dominated by these feature. The feature normalization brings all features to the same value range, so that each feature contributes approximately proportionately to the final distance. As a result the gradient decent method converges faster.
+
+<!--#### Setup of traing, validation and test data
 ####2. Describe how, and identify where in your code, you set up training, validation and testing data. How much data was in each set? Explain what techniques were used to split the data into these sets. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, identify where in your code, and provide example images of the additional data)
 
 The code for splitting the data into training and validation sets is contained in the fifth code cell of the IPython notebook.  
@@ -82,51 +131,83 @@ To cross validate my model, I randomly split the training data into a training s
 
 My final training set had X number of images. My validation set and test set had Y and Z number of images.
 
-The sixth code cell of the IPython notebook contains the code for augmenting the data set. I decided to generate additional data because ... To add more data to the the data set, I used the following techniques because ... 
+The sixth code cell of the IPython notebook contains the code for augmenting the data set. I decided to generate additional data because ... To add more data to the the data set, I used the following techniques because ...
 
 Here is an example of an original image and an augmented image:
 
-![alt text][image3]
+![alt text][image5]
 
-The difference between the original data set and the augmented data set is the following ... 
+The difference between the original data set and the augmented data set is the following ... -->
 
+### Model Architecture
+The code for my final model is located in the cell 11 of the IPython notebook.
 
-####3. Describe, and identify where in your code, what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
+My final model is based on a Le-Net-5 with two additional dropout layers in each fully connected layer as listed below:
 
-The code for my final model is located in the seventh cell of the ipython notebook. 
+| Layer           | Description                                             |
+|:----------------|:--------------------------------------------------------|
+| Input           | 32x32x1 pre-processed grayscale image                   |
+| Convolution     | 5x5 filter, 1x1 stride, valid padding, outputs 28x28x6  |
+| RELU            |                                                         |
+| Max pooling     | 2x2 stride, valid padding, outputs 14x14x6              |
+| Convolution     | 4x4 filter, 1x1 stride, valid padding, outputs 10x10x16 |
+| Max pooling     | 2x2 stride, valid padding, outputs 5x5x16               |
+| Flatten         | ouputs 400                                              |
+| Fully connected | 400x120, outputs 120                                    |
+| RELU            |                                                         |
+| Dropout         | 50% keep probability, outputs 120                       |
+| Fully connected | 120x84, outputs 84                                      |
+| RELU            |                                                         |
+| Dropout         | 50% keep probability, outputs 84                        |
+| Fully connected | 84x43, outputs 43                                       |
+| Softmax         | outputs 43                                              |
+| One-hot         | outputs 43                                              |
 
-My final model consisted of the following layers:
+### Model Training
+The code for training the model is located in the cell 11 and 13  of the IPython notebook.
 
-| Layer         		|     Description	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x1 pre-processed grayscale image. 		| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
-| RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
- 
+To train the model, I used the following hyperparameters.
 
+```python
+# Hyperparameter
+LEARNINGRATE = 0.001
+EPOCHS       = 50          # number of epochs used in training
+BATCH_SIZE   = 128         # batch size
+DROPOUT_FC   = 0.5         # keep probability for dropout units in fully connected layers
+```
 
-####4. Describe how, and identify where in your code, you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
+The Softmax functions calculates the probabilities of the traffic sign class based on the logits outputted by the last fully connected layer. Additionally, the traffic sign class is encoded by a one-hot encoding.
 
-The code for training the model is located in the eigth cell of the ipython notebook. 
+The cost (resp. loss) is calculated by the following two lines of code.
 
-To train the model, I used an ....
+```python
+cross_entropy      = tf.nn.softmax_cross_entropy_with_logits(logits, one_hot_y)
+loss_operation     = tf.reduce_mean(cross_entropy)
+```
 
-####5. Describe the approach taken for finding a solution. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+The next two lines of code initializes the Adam optimizer with the learning rate and the loss operation. The Adam optimizer computes individual adaptive learning rates. The `learning_rate` parameter defines the max applied learning rate.
 
-The code for calculating the accuracy of the model is located in the ninth cell of the Ipython notebook.
+```python
+optimizer          = tf.train.AdamOptimizer(learning_rate = LEARNINGRATE)
+training_operation = optimizer.minimize(loss_operation
+```
+
+### Finding the Solution
+
+<!--####5. Describe the approach taken for finding a solution. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.-->
+
+The code for calculating the accuracy of the model is located in the cell 12 of the IPython notebook.
 
 My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
+* training set accuracy of 99.8 %
+* validation set accuracy of 95.5 %
+* test set accuracy of 94.8 %
 
-If an iterative approach was chosen:
+The diagrams below gives an overview about the loss and accuracy over the epochs for the standard Le-Net-5 (blue lines) and the the Le-Net-5 with two 50% dropout units (red lines).
+
+![loss and accuracy charts][image4]
+
+<!--If an iterative approach was chosen:
 * What was the first architecture that was tried and why was it chosen?
 * What were some problems with the initial architecture?
 * How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to over fitting or under fitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
@@ -136,50 +217,137 @@ If an iterative approach was chosen:
 If a well known architecture was chosen:
 * What architecture was chosen?
 * Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
- 
+* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?-->
 
-###Test a Model on New Images
 
-####1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
+## Test a Model on New Images
+Here are five German traffic signs that I found on the web (extracted from goolge street view). The first row shows the original RGB image, the second row the pre-processed images.
 
-Here are five German traffic signs that I found on the web:
+![alt text][image5]
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+The first image might be difficult to classify because it shows an electronic sign on a German motorway. It looks like an inverted image (white characters and black background). The keep right and yield signs are slightly rotated and tilted which might lead to classification issues.
 
-The first image might be difficult to classify because ...
-
-####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. Identify where in your code predictions were made. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
-
-The code for making predictions on my final model is located in the tenth cell of the Ipython notebook.
+### Model Predictions on new Images
+The code for making predictions on my final model is located in the cell 15 of the IPython notebook.
 
 Here are the results of the prediction:
 
-| Image			        |     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Image                   | Prediction              | Probability |
+|:------------------------|:------------------------|------------:|
+| 03-Speed limit (60km/h) | 03-Speed limit (60km/h) |      38.47% |
+| 01-Speed limit (30km/h) | 01-Speed limit (30km/h) |      99.99% |
+| 03-Speed limit (60km/h) | 03-Speed limit (60km/h) |     100.00% |
+| 38-Keep right           | 38-Keep right           |      99.49% |
+| 13-Yield                | 13-Yield                |     100.00% |
 
+The model was able to correctly guess 5 of the 5 traffic signs, which gives an accuracy of 100%. The probability of the first 60 km/h speed limit sign is pretty low compared to the other signs. This may be due to the black sign background and the white characters, which is not part in the training set.
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+### Top 5 Softmax Probabilities
+The following bar charts give an overview about the top 5 softmax values for each traffic sign prediction.
+#### Sign: "Speed limit 60 km/h electronic"
+For the first image, the model is pretty unsure that this is a 60 km/h speed limit sign (probability of 0.38469). The top five soft max probabilities were
 
-####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction and identify where in your code softmax probabilities were outputted. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
+![probabilities sign 60 km/h electronic][image7]
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+#### Sign: "Speed limit 30 km/h"
+For the second image, the model is relatively sure that this is a 30 km/h speed limit sign (probability of 0.99988). The top five soft max probabilities were
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
+![probabilities sign 30 km/h][image8]
 
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
+#### Sign: "Speed limit 60 km/h"
+For the third image, the model is absolutely sure that this is a 60 km/h speed limit sign (probability of 1.0). The top five soft max probabilities were
 
+![probabilities sign 60 km/h][image9]
 
-For the second image ... 
+#### Sign: "Keep right"
+For the fourth image, the model is relatively sure that this is a keep right sign (probability of 0.99485). The top five soft max probabilities were
+
+![probabilities sign keep right][image10]
+
+#### Sign: "Yield"
+For the fifth image, the model is absolutely sure that this is a yield sign (probability of 1.0). The top five soft max probabilities were
+
+![probabilities sign yield][image11]
+
+### Precision, Recall and f1-Score
+#### Precision
+The precision is also known as PPV (positive predictive value) and answers the question "What proportion of the instances classified as X is actually an X?"
+
+precision = TP / (TP + FP)
+#### Recall
+recall = TP / (TP + FN)
+
+The recall is also known as TPR (true positive rate) and answers the question "What proportion of the real X was actually classified as X?"
+#### f1-Score
+The f1-score describes the relationship between the precision and the recall value. 1.0 means best case.
+
+f-score = 2 precision recall / (precision + recall)
+
+The table below shows the precision, the recall and the f1-Score for all signs in the test set.
+
+| ID | Signname                                           | Precision |   Recall | F-Score | Support |
+|:---|:---------------------------------------------------|----------:|---------:|--------:|--------:|
+| 0  | Speed limit (20km/h)                               |   98.11 % |  86.67 % |    0.92 |      60 |
+| 1  | Speed limit (30km/h)                               |   94.87 % |  97.64 % |    0.96 |     720 |
+| 2  | Speed limit (50km/h)                               |   95.61 % |  98.80 % |    0.97 |     750 |
+| 3  | Speed limit (60km/h)                               |   98.33 % |  91.33 % |    0.95 |     450 |
+| 4  | Speed limit (70km/h)                               |   97.98 % |  95.76 % |    0.97 |     660 |
+| 5  | Speed limit (80km/h)                               |   89.86 % |  94.29 % |    0.92 |     630 |
+| 6  | End of speed limit (80km/h)                        |   98.55 % |  90.67 % |    0.94 |     150 |
+| 7  | Speed limit (100km/h)                              |   92.80 % |  97.33 % |    0.95 |     450 |
+| 8  | Speed limit (120km/h)                              |   96.74 % |  92.44 % |    0.95 |     450 |
+| 9  | No passing                                         |   95.02 % |  99.38 % |    0.97 |     480 |
+| 10 | No passing for vehicles over 3.5 metric tons       |   98.19 % |  98.48 % |    0.98 |     660 |
+| 11 | Right-of-way at the next intersection              |   90.25 % |  94.76 % |    0.92 |     420 |
+| 12 | Priority road                                      |   97.00 % |  98.26 % |    0.98 |     690 |
+| 13 | Yield                                              |   99.17 % |  99.72 % |    0.99 |     720 |
+| 14 | Stop                                               |  100.00 % |  95.93 % |    0.98 |     270 |
+| 15 | No vehicles                                        |   96.59 % |  94.29 % |    0.95 |     210 |
+| 16 | Vehicles over 3.5 metric tons prohibited           |   98.68 % | 100.00 % |    0.99 |     150 |
+| 17 | No entry                                           |   98.89 % |  98.89 % |    0.99 |     360 |
+| 18 | General caution                                    |   92.39 % |  90.26 % |    0.91 |     390 |
+| 19 | Dangerous curve to the left                        |   83.33 % |  91.67 % |    0.87 |      60 |
+| 20 | Dangerous curve to the right                       |   92.05 % |  90.00 % |    0.91 |      90 |
+| 21 | Double curve                                       |   92.65 % |  70.00 % |    0.80 |      90 |
+| 22 | Bumpy road                                         |   88.89 % |  86.67 % |    0.88 |     120 |
+| 23 | Slippery road                                      |   92.05 % |  92.67 % |    0.92 |     150 |
+| 24 | Road narrows on the right                          |   83.10 % |  65.56 % |    0.73 |      90 |
+| 25 | Road work                                          |   96.81 % |  94.79 % |    0.96 |     480 |
+| 26 | Traffic signals                                    |   90.67 % |  75.56 % |    0.82 |     180 |
+| 27 | Pedestrians                                        |   54.10 % |  55.00 % |    0.55 |      60 |
+| 28 | Children crossing                                  |   97.35 % |  98.00 % |    0.98 |     150 |
+| 29 | Bicycles crossing                                  |   89.11 % | 100.00 % |    0.94 |      90 |
+| 30 | Beware of ice/snow                                 |   88.00 % |  73.33 % |    0.80 |     150 |
+| 31 | Wild animals crossing                              |   92.47 % | 100.00 % |    0.96 |     270 |
+| 32 | End of all speed and passing limits                |   90.91 % | 100.00 % |    0.95 |      60 |
+| 33 | Turn right ahead                                   |   88.14 % |  99.05 % |    0.93 |     210 |
+| 34 | Turn left ahead                                    |   92.25 % |  99.17 % |    0.96 |     120 |
+| 35 | Ahead only                                         |   98.23 % |  99.49 % |    0.99 |     390 |
+| 36 | Go straight or right                               |   88.19 % |  93.33 % |    0.91 |     120 |
+| 37 | Go straight or left                                |   91.07 % |  85.00 % |    0.88 |      60 |
+| 38 | Keep right                                         |   96.23 % |  96.23 % |    0.96 |     690 |
+| 39 | Keep left                                          |   91.75 % |  98.89 % |    0.95 |      90 |
+| 40 | Roundabout mandatory                               |   92.50 % |  82.22 % |    0.87 |      90 |
+| 41 | End of no passing                                  |   78.57 % |  73.33 % |    0.76 |      60 |
+| 42 | End of no passing by vehicles over 3.5 metric tons |   95.65 % |  73.33 % |    0.83 |      90 |
+
+The bar chart summarizes the f1-score over all traffic sign classes. Green bars show classes with a f1-score >0.9 which means a good recall and precision value, yellow bars with a f1-score <=0.9 and red bars with a f1-score <=0.8. The prediction performance of the yellow and red traffic sign classes are not sufficient.
+
+If we compare the yellow and red traffic sign classes with the table above, we can see that these are almost the classes with a low number of training samples. One solution would be to add new sample by augmenting the training data set. This can be done e.g by rotation, zoom and flips.
+
+![f1-scores][image12]
+
+The normalized confusion matrix summarizes the table above. The x-axis indicates the predicted signs by the model and y-axis the real sign (ground truth). The diagonal line describes the points where the IPython sign is equal to the ground truth data. All other areas are false positives.
+
+![confusion matrix][image6]
+
+## Visualization of the CNN Layers
+The following list describes the features maps of the layer 1 activation relu. The activation unit is calculated for the keep right traffic sign.
+
+- Feature Map 0 seems to look for round shapes and the arrow head
+- Feature Map 1 seems to look for round shapes with an right arrow
+- Feature Map 3 and 5 seems to look for round shapes with more "clutter/noise" in the background
+
+**CNN Layer 1**
+
+![CNN layer 1][image13]
