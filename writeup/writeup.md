@@ -142,38 +142,42 @@ The difference between the original data set and the augmented data set is the f
 ### Model Architecture
 The code for my final model is located in the cell 11 of the IPython notebook.
 
-My final model is based on a Le-Net-5 with two additional dropout layers in each fully connected layer as listed below:
+My final model is based on a Le-Net-5 with two additional dropout layers in each fully connected layer and deeper convolutional and fully connected layers as listed below:
 
 | Layer           | Description                                             |
 |:----------------|:--------------------------------------------------------|
 | Input           | 32x32x1 pre-processed grayscale image                   |
-| Convolution     | 5x5 filter, 1x1 stride, valid padding, outputs 28x28x6  |
+| Convolution     | 5x5 filter, 1x1 stride, valid padding, outputs 28x28x15 |
 | RELU            |                                                         |
-| Max pooling     | 2x2 stride, valid padding, outputs 14x14x6              |
-| Convolution     | 4x4 filter, 1x1 stride, valid padding, outputs 10x10x16 |
-| Max pooling     | 2x2 stride, valid padding, outputs 5x5x16               |
-| Flatten         | ouputs 400                                              |
-| Fully connected | 400x120, outputs 120                                    |
+| Max pooling     | 2x2 stride, valid padding, outputs 14x14x15             |
+| Convolution     | 4x4 filter, 1x1 stride, valid padding, outputs 10x10x30 |
 | RELU            |                                                         |
-| Dropout         | 50% keep probability, outputs 120                       |
-| Fully connected | 120x84, outputs 84                                      |
+| Max pooling     | 2x2 stride, valid padding, outputs 5x5x30               |
+| Flatten         | outputs 750                                             |
+| Fully connected | 750x150, outputs 150                                    |
 | RELU            |                                                         |
-| Dropout         | 50% keep probability, outputs 84                        |
-| Fully connected | 84x43, outputs 43                                       |
+| Dropout         | 50% keep probability, outputs 150                       |
+| Fully connected | 150x100, outputs 100                                    |
+| RELU            |                                                         |
+| Dropout         | 50% keep probability, outputs 100                       |
+| Fully connected | 100x43, outputs 43                                      |
 | Softmax         | outputs 43                                              |
 | One-hot         | outputs 43                                              |
 
 ### Model Training
 The code for training the model is located in the cell 11 and 13  of the IPython notebook.
 
-To train the model, I used the following hyperparameters.
+To train the model, I used the following hyperparameters. In order to detect the stagnation of model training, I introduced a min required improvement of the validation accuracy (`MIN_REQ_DELTA_ACCURACY`) and the validation loss (`MIN_REQ_DELTA_LOSS`) after each epoch. I the improvement stagnates for more than `MAX_COUNT_STOP_TRAINING`epochs, the model training will be terminated.
 
 ```python
 # Hyperparameter
-LEARNINGRATE = 0.001
-EPOCHS       = 50          # number of epochs used in training
-BATCH_SIZE   = 128         # batch size
-DROPOUT_FC   = 0.5         # keep probability for dropout units in fully connected layers
+LEARNINGRATE            = 0.001
+EPOCHS                  = 50          # number of epochs used in training
+BATCH_SIZE              = 128         # batch size
+DROPOUT_FC              = 0.5         # keep probability for dropout units in fully connected layers
+MIN_REQ_DELTA_ACCURACY  = 0.0005      # min required delta accuracy to continue training
+MIN_REQ_DELTA_LOSS      = -0.001      # min required delta loss to continue training
+MAX_COUNT_STOP_TRAINING = 2           # max number of epochs without any accuracy or loss improvements
 ```
 
 The Softmax functions calculates the probabilities of the traffic sign class based on the logits outputted by the last fully connected layer. Additionally, the traffic sign class is encoded by a one-hot encoding.
@@ -192,18 +196,33 @@ optimizer          = tf.train.AdamOptimizer(learning_rate = LEARNINGRATE)
 training_operation = optimizer.minimize(loss_operation
 ```
 
+Furthermore, I save my model only if the validation accuracy has been improved compared to the previous epoch.
+
 ### Finding the Solution
 
 <!--####5. Describe the approach taken for finding a solution. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.-->
 
 The code for calculating the accuracy of the model is located in the cell 12 of the IPython notebook.
 
-My final model results were:
-* training set accuracy of 99.8 %
-* validation set accuracy of 95.5 %
-* test set accuracy of 94.8 %
+First I tried the standard Le-Net-5 model (see `LeNet()`function) with the pre-processed grayscale images. The model achieved a good validation set accuracy (94.7% accuracy) but does not generalizes well on the test set (93.3% accuracy) and the five new traffic sign images (80.0% accuracy).
 
-The diagrams below gives an overview about the loss and accuracy over the epochs for the standard Le-Net-5 (blue lines) and the the Le-Net-5 with two 50% dropout units (red lines).
+In order to improve the generalization of the model I introduced 50% dropout units in each fully connected layer (see `LeNetDropout()`function). These units reduced the overfitting of the model. The dropout units increased the test set accuracy by +1.5% and the accuracy on the five new traffic sign images by +20%. Nevertheless, the +20% is not really appreciable because the softmax probability of the 60 km/h electronic speed limit is just at 0.38469. The model is still unsure.
+
+In my final model I increased the depth of each convolutional and fully connected layer in order to further reduce the overfitting. By the increased depth, the model is more capable to handle complex structures in the images. These model changes improved the test set accuracy by +1.8% and the +20% for the five new traffic sign images. Especially the softmax probability of the 60 km/h electronic speed limit could be increased from 0.38469 to 0.4806 (see chapter top 5 softmax probabilities).
+
+Further improvements will be possible by more complex models. Nevertheless, the training of these models will need a GPU. I trained my model on my local MacBookPro from 2010 (i5 2.53 GHz, 8 GB RAM) on just a CPU which takes roughly 45-60 minutes.
+
+Model Results:
+
+| Model                   | Le-Net-5 | Le-Net-5 with Dropout | Deeper Le-Net-5 with Dropout |
+|:------------------------|---------:|----------------------:|-----------------------------:|
+| epochs till stagnation  |       17 |                    50 |                           13 |
+| training set accuracy   |    99.9% |                 99.8% |                        99.7% |
+| validation set accuracy |    94.7% |                 95.5% |                        97.1% |
+| test set accuracy       |    93.3% |                 94.8% |                        95.1% |
+| 5 new signs accuracy    |    80.0% |                100.0% |                       100.0% |
+
+The diagrams below gives an overview about the loss and accuracy over the epochs for the standard Le-Net-5 (blue lines), the Le-Net-5 with two 50% dropout units (red lines) and the deep Le-Net-5 with two 50% dropout units (green lines).
 
 ![loss and accuracy charts][image4]
 
@@ -234,10 +253,10 @@ Here are the results of the prediction:
 
 | Image                   | Prediction              | Probability |
 |:------------------------|:------------------------|------------:|
-| 03-Speed limit (60km/h) | 03-Speed limit (60km/h) |      38.47% |
-| 01-Speed limit (30km/h) | 01-Speed limit (30km/h) |      99.99% |
+| 03-Speed limit (60km/h) | 03-Speed limit (60km/h) |      48.06% |
+| 01-Speed limit (30km/h) | 01-Speed limit (30km/h) |     100.00% |
 | 03-Speed limit (60km/h) | 03-Speed limit (60km/h) |     100.00% |
-| 38-Keep right           | 38-Keep right           |      99.49% |
+| 38-Keep right           | 38-Keep right           |      99.97% |
 | 13-Yield                | 13-Yield                |     100.00% |
 
 The model was able to correctly guess 5 of the 5 traffic signs, which gives an accuracy of 100%. The probability of the first 60 km/h speed limit sign is pretty low compared to the other signs. This may be due to the black sign background and the white characters, which is not part in the training set.
