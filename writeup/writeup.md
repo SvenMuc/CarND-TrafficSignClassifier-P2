@@ -208,7 +208,7 @@ First I tried the standard Le-Net-5 model (see `LeNet()`function) with the pre-p
 
 In order to improve the generalization of the model I introduced 50% dropout units in each fully connected layer (see `LeNetDropout()`function). These units reduced the overfitting of the model. The dropout units increased the test set accuracy by +1.5% and the accuracy on the five new traffic sign images by +20%. Nevertheless, the +20% is not really appreciable because the softmax probability of the 60 km/h electronic speed limit is just at 0.38469. The model is still unsure.
 
-In my final model I increased the depth of each convolutional and fully connected layer in order to further reduce the overfitting. By the increased depth, the model is more capable to handle complex structures in the images. These model changes improved the test set accuracy by +1.8% and the +20% for the five new traffic sign images. Especially the softmax probability of the 60 km/h electronic speed limit could be increased from 0.38469 to 0.4806 (see chapter top 5 softmax probabilities).
+In my final model I increased the depth of each convolutional and fully connected layer in order to further reduce the overfitting. By the increased depth, the model is more capable to handle complex structures in the images. These model changes improved the test set accuracy by +2.8%.
 
 Further improvements will be possible by more complex models. Nevertheless, the training of these models will need a GPU. I trained my model on my local MacBookPro from 2010 (i5 2.53 GHz, 8 GB RAM) on just a CPU which takes roughly 45-60 minutes.
 
@@ -216,11 +216,11 @@ Model Results:
 
 | Model                   | Le-Net-5 | Le-Net-5 with Dropout | Deeper Le-Net-5 with Dropout |
 |:------------------------|---------:|----------------------:|-----------------------------:|
-| epochs till stagnation  |       17 |                    50 |                           13 |
-| training set accuracy   |    99.9% |                 99.8% |                        99.7% |
-| validation set accuracy |    94.7% |                 95.5% |                        97.1% |
-| test set accuracy       |    93.3% |                 94.8% |                        95.1% |
-| 5 new signs accuracy    |    80.0% |                100.0% |                       100.0% |
+| epochs till stagnation  |       17 |                    50 |                           25 |
+| training set accuracy   |    99.9% |                 99.8% |                        99.9% |
+| validation set accuracy |    94.7% |                 95.5% |                        97.8% |
+| test set accuracy       |    93.3% |                 94.8% |                        96.1% |
+| 5 new signs accuracy    |    80.0% |                100.0% |                        80.0% |
 
 The diagrams below gives an overview about the loss and accuracy over the epochs for the standard Le-Net-5 (blue lines), the Le-Net-5 with two 50% dropout units (red lines) and the deep Le-Net-5 with two 50% dropout units (green lines).
 
@@ -253,23 +253,23 @@ Here are the results of the prediction:
 
 | Image                   | Prediction              | Probability |
 |:------------------------|:------------------------|------------:|
-| 03-Speed limit (60km/h) | 03-Speed limit (60km/h) |      48.06% |
+| 03-Speed limit (60km/h) | 14-Stop                 |      99.82% |
 | 01-Speed limit (30km/h) | 01-Speed limit (30km/h) |     100.00% |
 | 03-Speed limit (60km/h) | 03-Speed limit (60km/h) |     100.00% |
-| 38-Keep right           | 38-Keep right           |      99.97% |
+| 38-Keep right           | 38-Keep right           |      99.84% |
 | 13-Yield                | 13-Yield                |     100.00% |
 
-The model was able to correctly guess 5 of the 5 traffic signs, which gives an accuracy of 100%. The probability of the first 60 km/h speed limit sign is pretty low compared to the other signs. This may be due to the black sign background and the white characters, which is not part in the training set.
+The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80.0%. The first 60 km/h speed limit sign is hard to predict, because it is not part of the training set. The colors are inverted (black sign background and the white characters).
 
 ### Top 5 Softmax Probabilities
 The following bar charts give an overview about the top 5 softmax values for each traffic sign prediction.
 #### Sign: "Speed limit 60 km/h electronic"
-For the first image, the model is pretty unsure that this is a 60 km/h speed limit sign (probability of 0.38469). The top five soft max probabilities were
+For the first image, the model is wrong and predicted the 60 km/h speed limit sign as stop sign (probability of 0.99816). The top five soft max probabilities were
 
 ![probabilities sign 60 km/h electronic][image7]
 
 #### Sign: "Speed limit 30 km/h"
-For the second image, the model is relatively sure that this is a 30 km/h speed limit sign (probability of 0.99988). The top five soft max probabilities were
+For the second image, the model is relatively sure that this is a 30 km/h speed limit sign (probability of 1.0). The top five soft max probabilities were
 
 ![probabilities sign 30 km/h][image8]
 
@@ -279,7 +279,7 @@ For the third image, the model is absolutely sure that this is a 60 km/h speed l
 ![probabilities sign 60 km/h][image9]
 
 #### Sign: "Keep right"
-For the fourth image, the model is relatively sure that this is a keep right sign (probability of 0.99485). The top five soft max probabilities were
+For the fourth image, the model is relatively sure that this is a keep right sign (probability of 0.99837). The top five soft max probabilities were
 
 ![probabilities sign keep right][image10]
 
@@ -306,49 +306,49 @@ The table below shows the precision, the recall and the f1-Score for all signs i
 
 | ID | Signname                                           | Precision |   Recall | F-Score | Support |
 |:---|:---------------------------------------------------|----------:|---------:|--------:|--------:|
-| 0  | Speed limit (20km/h)                               |   98.11 % |  86.67 % |    0.92 |      60 |
-| 1  | Speed limit (30km/h)                               |   94.87 % |  97.64 % |    0.96 |     720 |
-| 2  | Speed limit (50km/h)                               |   95.61 % |  98.80 % |    0.97 |     750 |
-| 3  | Speed limit (60km/h)                               |   98.33 % |  91.33 % |    0.95 |     450 |
-| 4  | Speed limit (70km/h)                               |   97.98 % |  95.76 % |    0.97 |     660 |
-| 5  | Speed limit (80km/h)                               |   89.86 % |  94.29 % |    0.92 |     630 |
-| 6  | End of speed limit (80km/h)                        |   98.55 % |  90.67 % |    0.94 |     150 |
-| 7  | Speed limit (100km/h)                              |   92.80 % |  97.33 % |    0.95 |     450 |
-| 8  | Speed limit (120km/h)                              |   96.74 % |  92.44 % |    0.95 |     450 |
-| 9  | No passing                                         |   95.02 % |  99.38 % |    0.97 |     480 |
-| 10 | No passing for vehicles over 3.5 metric tons       |   98.19 % |  98.48 % |    0.98 |     660 |
-| 11 | Right-of-way at the next intersection              |   90.25 % |  94.76 % |    0.92 |     420 |
-| 12 | Priority road                                      |   97.00 % |  98.26 % |    0.98 |     690 |
-| 13 | Yield                                              |   99.17 % |  99.72 % |    0.99 |     720 |
-| 14 | Stop                                               |  100.00 % |  95.93 % |    0.98 |     270 |
-| 15 | No vehicles                                        |   96.59 % |  94.29 % |    0.95 |     210 |
-| 16 | Vehicles over 3.5 metric tons prohibited           |   98.68 % | 100.00 % |    0.99 |     150 |
-| 17 | No entry                                           |   98.89 % |  98.89 % |    0.99 |     360 |
-| 18 | General caution                                    |   92.39 % |  90.26 % |    0.91 |     390 |
-| 19 | Dangerous curve to the left                        |   83.33 % |  91.67 % |    0.87 |      60 |
-| 20 | Dangerous curve to the right                       |   92.05 % |  90.00 % |    0.91 |      90 |
-| 21 | Double curve                                       |   92.65 % |  70.00 % |    0.80 |      90 |
-| 22 | Bumpy road                                         |   88.89 % |  86.67 % |    0.88 |     120 |
-| 23 | Slippery road                                      |   92.05 % |  92.67 % |    0.92 |     150 |
-| 24 | Road narrows on the right                          |   83.10 % |  65.56 % |    0.73 |      90 |
-| 25 | Road work                                          |   96.81 % |  94.79 % |    0.96 |     480 |
-| 26 | Traffic signals                                    |   90.67 % |  75.56 % |    0.82 |     180 |
-| 27 | Pedestrians                                        |   54.10 % |  55.00 % |    0.55 |      60 |
-| 28 | Children crossing                                  |   97.35 % |  98.00 % |    0.98 |     150 |
-| 29 | Bicycles crossing                                  |   89.11 % | 100.00 % |    0.94 |      90 |
-| 30 | Beware of ice/snow                                 |   88.00 % |  73.33 % |    0.80 |     150 |
-| 31 | Wild animals crossing                              |   92.47 % | 100.00 % |    0.96 |     270 |
-| 32 | End of all speed and passing limits                |   90.91 % | 100.00 % |    0.95 |      60 |
-| 33 | Turn right ahead                                   |   88.14 % |  99.05 % |    0.93 |     210 |
-| 34 | Turn left ahead                                    |   92.25 % |  99.17 % |    0.96 |     120 |
-| 35 | Ahead only                                         |   98.23 % |  99.49 % |    0.99 |     390 |
-| 36 | Go straight or right                               |   88.19 % |  93.33 % |    0.91 |     120 |
-| 37 | Go straight or left                                |   91.07 % |  85.00 % |    0.88 |      60 |
-| 38 | Keep right                                         |   96.23 % |  96.23 % |    0.96 |     690 |
-| 39 | Keep left                                          |   91.75 % |  98.89 % |    0.95 |      90 |
-| 40 | Roundabout mandatory                               |   92.50 % |  82.22 % |    0.87 |      90 |
-| 41 | End of no passing                                  |   78.57 % |  73.33 % |    0.76 |      60 |
-| 42 | End of no passing by vehicles over 3.5 metric tons |   95.65 % |  73.33 % |    0.83 |      90 |
+| 0  | Speed limit (20km/h)                               |   98.36 % | 100.00 % |    0.99 |      60 |
+| 1  | Speed limit (30km/h)                               |   98.88 % |  97.78 % |    0.98 |     720 |
+| 2  | Speed limit (50km/h)                               |   96.62 % |  99.20 % |    0.98 |     750 |
+| 3  | Speed limit (60km/h)                               |   97.43 % |  92.67 % |    0.95 |     450 |
+| 4  | Speed limit (70km/h)                               |   99.54 % |  98.33 % |    0.99 |     660 |
+| 5  | Speed limit (80km/h)                               |   89.31 % |  96.83 % |    0.93 |     630 |
+| 6  | End of speed limit (80km/h)                        |   96.67 % |  96.67 % |    0.97 |     150 |
+| 7  | Speed limit (100km/h)                              |   95.18 % |  96.44 % |    0.96 |     450 |
+| 8  | Speed limit (120km/h)                              |   97.73 % |  95.56 % |    0.97 |     450 |
+| 9  | No passing                                         |   98.56 % |  99.79 % |    0.99 |     480 |
+| 10 | No passing for vehicles over 3.5 metric tons       |   99.23 % |  97.88 % |    0.99 |     660 |
+| 11 | Right-of-way at the next intersection              |   91.14 % |  95.48 % |    0.93 |     420 |
+| 12 | Priority road                                      |   99.71 % |  98.26 % |    0.99 |     690 |
+| 13 | Yield                                              |   99.58 % |  99.58 % |    1.00 |     720 |
+| 14 | Stop                                               |   98.49 % |  96.67 % |    0.98 |     270 |
+| 15 | No vehicles                                        |   97.65 % |  99.05 % |    0.98 |     210 |
+| 16 | Vehicles over 3.5 metric tons prohibited           |  100.00 % |  99.33 % |    1.00 |     150 |
+| 17 | No entry                                           |   99.72 % |  97.78 % |    0.99 |     360 |
+| 18 | General caution                                    |   97.69 % |  86.67 % |    0.92 |     390 |
+| 19 | Dangerous curve to the left                        |   77.92 % | 100.00 % |    0.88 |      60 |
+| 20 | Dangerous curve to the right                       |   90.70 % |  86.67 % |    0.89 |      90 |
+| 21 | Double curve                                       |   94.92 % |  62.22 % |    0.75 |      90 |
+| 22 | Bumpy road                                         |   99.03 % |  85.00 % |    0.91 |     120 |
+| 23 | Slippery road                                      |   82.78 % |  99.33 % |    0.90 |     150 |
+| 24 | Road narrows on the right                          |   85.42 % |  91.11 % |    0.88 |      90 |
+| 25 | Road work                                          |   96.11 % |  97.92 % |    0.97 |     480 |
+| 26 | Traffic signals                                    |   82.22 % |  82.22 % |    0.82 |     180 |
+| 27 | Pedestrians                                        |   67.19 % |  71.67 % |    0.69 |      60 |
+| 28 | Children crossing                                  |   94.87 % |  98.67 % |    0.97 |     150 |
+| 29 | Bicycles crossing                                  |   94.68 % |  98.89 % |    0.97 |      90 |
+| 30 | Beware of ice/snow                                 |   91.94 % |  76.00 % |    0.83 |     150 |
+| 31 | Wild animals crossing                              |   94.70 % |  99.26 % |    0.97 |     270 |
+| 32 | End of all speed and passing limits                |   93.65 % |  98.33 % |    0.96 |      60 |
+| 33 | Turn right ahead                                   |   95.00 % |  99.52 % |    0.97 |     210 |
+| 34 | Turn left ahead                                    |   86.23 % |  99.17 % |    0.92 |     120 |
+| 35 | Ahead only                                         |   98.71 % |  98.46 % |    0.99 |     390 |
+| 36 | Go straight or right                               |   97.54 % |  99.17 % |    0.98 |     120 |
+| 37 | Go straight or left                                |  100.00 % |  98.33 % |    0.99 |      60 |
+| 38 | Keep right                                         |   98.11 % |  97.97 % |    0.98 |     690 |
+| 39 | Keep left                                          |   98.81 % |  92.22 % |    0.95 |      90 |
+| 40 | Roundabout mandatory                               |   94.59 % |  77.78 % |    0.85 |      90 |
+| 41 | End of no passing                                  |   80.00 % |  93.33 % |    0.86 |      60 |
+| 42 | End of no passing by vehicles over 3.5 metric tons |   94.74 % |  80.00 % |    0.87 |      90 |
 
 The bar chart summarizes the f1-score over all traffic sign classes. Green bars show classes with a f1-score >0.9 which means a good recall and precision value, yellow bars with a f1-score <=0.9 and red bars with a f1-score <=0.8. The prediction performance of the yellow and red traffic sign classes are not sufficient.
 
@@ -363,9 +363,9 @@ The normalized confusion matrix summarizes the table above. The x-axis indicates
 ## Visualization of the CNN Layers
 The following list describes the features maps of the layer 1 activation relu. The activation unit is calculated for the keep right traffic sign.
 
-- Feature Map 0 seems to look for round shapes and the arrow head
-- Feature Map 1 seems to look for round shapes with an right arrow
-- Feature Map 3 and 5 seems to look for round shapes with more "clutter/noise" in the background
+- Feature Map 0 seems to look for round shapes and the arrow line
+- Feature Map 13 seems to look for round shapes with an right arrow head
+- Feature Map 2, 7, 11 and 14 seem to look for round shapes with more "clutter/noise" in the background
 
 **CNN Layer 1**
 
