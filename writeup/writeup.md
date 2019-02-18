@@ -1,6 +1,7 @@
-# Traffic Sign Recognition
+# Project 2: Traffic Sign Recognition
+[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
 
-### Build a Traffic Sign Recognition Project
+## 1. Introduction
 
 The goals / steps of this project are the following:
 * Load the data set (see below for links to the project data set)
@@ -26,13 +27,14 @@ The goals / steps of this project are the following:
 [image12]: ./fscores.png "f1-scores"
 [image13]: ./layer_1_activations.png "layer 1"
 
-### Writeup / README
+## 2. Project Dependencies
+This project requires:
 
-Link to my github project [Github project](https://github.com/SvenMuc/CarND-TrafficSignClassifier-P2).
+* [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit)
 
-## Data Set Summary & Exploration
+## 3. Data Set Summary & Exploration
 
-### Basic summary of the data set
+### 3.1 Basic summary of the data set
 
 The code for this step is contained in the code cells 1-3 of the IPython notebook.  
 
@@ -94,7 +96,7 @@ The data set contains 43 different German traffic signs as listed below.
 | 41      | End of no passing                                  |
 | 42      | End of no passing by vehicles over 3.5 metric tons |
 
-### Exploratory Visualization of the Dataset
+### 3.2 Exploratory Visualization of the Dataset
 
 The code for this step is contained in the code cell  6 and 7 of the IPython notebook.  
 
@@ -108,8 +110,8 @@ The images below give an overview about the German traffic signs contained in th
 
 ![Traffic sign examples][image1]
 
-## Design and Test a Model Architecture
-### Image Pre-Processing and Normalization
+## 4. Design and Test a Model Architecture
+### 4.1 Image Pre-Processing and Normalization
 The code for this step is contained in the code cell 8 and 9 of the IPython notebook.
 
 As a first step, I decided to convert the images to grayscale because test runs showed almost similar accuracies on the validation set with RGB images. By using grayscale images the input vector can be reduced from 32x32x3 down to 32x32x1. Furthermore, in the specific domain of traffic sign classification, the network looks for characteristic traffic sign structures which can also easily extracted from grayscale images (see also last chapter "visualization of CNN layers").
@@ -139,7 +141,7 @@ Here is an example of an original image and an augmented image:
 
 The difference between the original data set and the augmented data set is the following ... -->
 
-### Model Architecture
+### 4.2 Model Architecture
 The code for my final model is located in the cell 11 of the IPython notebook.
 
 My final model is based on a Le-Net-5 with two additional dropout layers in each fully connected layer and deeper convolutional and fully connected layers as listed below:
@@ -164,7 +166,7 @@ My final model is based on a Le-Net-5 with two additional dropout layers in each
 | Softmax         | outputs 43                                              |
 | One-hot         | outputs 43                                              |
 
-### Model Training
+### 4.3 Model Training
 The code for training the model is located in the cell 11 and 13  of the IPython notebook.
 
 To train the model, I used the following hyperparameters. In order to detect the stagnation of model training, I introduced a min required improvement of the validation accuracy (`MIN_REQ_DELTA_ACCURACY`) and the validation loss (`MIN_REQ_DELTA_LOSS`) after each epoch. I the improvement stagnates for more than `MAX_COUNT_STOP_TRAINING`epochs, the model training will be terminated.
@@ -198,7 +200,7 @@ training_operation = optimizer.minimize(loss_operation
 
 Furthermore, I save my model only if the validation accuracy has been improved compared to the previous epoch.
 
-### Finding the Solution
+### 4.4 Finding the Solution
 
 <!--####5. Describe the approach taken for finding a solution. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.-->
 
@@ -239,14 +241,14 @@ If a well known architecture was chosen:
 * How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?-->
 
 
-## Test a Model on New Images
+## 5. Test a Model on New Images
 Here are five German traffic signs that I found on the web (extracted from goolge street view). The first row shows the original RGB image, the second row the pre-processed images.
 
 ![alt text][image5]
 
 The first image might be difficult to classify because it shows an electronic sign on a German motorway. It looks like an inverted image (white characters and black background). The keep right and yield signs are slightly rotated and tilted which might lead to classification issues.
 
-### Model Predictions on new Images
+### 5.1 Model Predictions on new Images
 The code for making predictions on my final model is located in the cell 15 of the IPython notebook.
 
 Here are the results of the prediction:
@@ -261,7 +263,7 @@ Here are the results of the prediction:
 
 The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80.0%. The first 60 km/h speed limit sign is hard to predict, because it is not part of the training set. The colors are inverted (black sign background and the white characters).
 
-### Top 5 Softmax Probabilities
+### 5.2 Top 5 Softmax Probabilities
 The following bar charts give an overview about the top 5 softmax values for each traffic sign prediction.
 #### Sign: "Speed limit 60 km/h electronic"
 For the first image, the model is wrong and predicted the 60 km/h speed limit sign as stop sign (probability of 0.99816). The top five soft max probabilities were
@@ -288,7 +290,7 @@ For the fifth image, the model is absolutely sure that this is a yield sign (pro
 
 ![probabilities sign yield][image11]
 
-### Precision, Recall and f1-Score
+### 5.3 Precision, Recall and f1-Score
 #### Precision
 The precision is also known as PPV (positive predictive value) and answers the question "What proportion of the instances classified as X is actually an X?"
 
@@ -360,7 +362,7 @@ The normalized confusion matrix summarizes the table above. The x-axis indicates
 
 ![confusion matrix][image6]
 
-## Visualization of the CNN Layers
+## 6. Visualization of the CNN Layers
 The following list describes the features maps of the layer 1 activation relu. The activation unit is calculated for the keep right traffic sign.
 
 - Feature Map 0 seems to look for round shapes and the arrow line
